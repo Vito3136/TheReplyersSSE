@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="login-container">
+<h2>Login</h2>
+<form method="post" action="/login">
+    <label>Username: <input type="text" name="username"/></label><br/>
+    <label>Password: <input type="password" name="password"/></label><br/>
+    <div class="button-group">
+        <button type="submit">Login</button>
+        <a href="/signup" class="signup-button">Signup</a>
+    </div>
+</form>
+<div th:if="${msg}" th:text="${msg}"></div>
+<div th:if="${error}" th:text="${error}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Main Page</title>
+    <link rel="stylesheet" href="/style2.css">
+</head>
+<body>
+<h2>Welcome, <span th:text="${username}"></span>!</h2>
+
+<h3>Quick message</h3>
+<form method="post" action="/message">
+    <input type="text" name="message" placeholder="Say something..."/>
+    <button type="submit">Send</button>
+</form>
+
+<h3>Upload a file</h3>
+<form method="post" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <button type="submit">Upload</button>
+</form>
+
+<p><a href="/uploads">View all uploads</a> | <a href="/logout">Logout</a></p>
+</body>
+</html>
