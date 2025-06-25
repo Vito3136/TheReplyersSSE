@@ -1,5 +1,8 @@
 package com.example.vulnapp.repository;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,15 +58,15 @@ public class Database {
              PreparedStatement ps = conn.prepareStatement(
                      "INSERT INTO users (username, password) VALUES (?, ?)")) {
             ps.setString(1, username);
-            ps.setString(2, password); // Plain‑text password (insecure)
+            ps.setString(2, md5(password));
             ps.executeUpdate();
         }
     }
 
-    // Vulnerable: SQL concatenation allows SQL Injection
     public static User validateUser(String username, String password) throws SQLException {
+        String hash = md5(password);
         String query = "SELECT * FROM users WHERE username = '" + username +
-                       "' AND password = '" + password + "'";
+                "' AND password = '" + hash + "'";
         try (Connection conn = getConnection();
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(query)) {
@@ -106,7 +109,6 @@ public class Database {
         return list;
     }
 
-    /* ========= quick-message helpers ========= */
     public static void addMessage(String content, long userId) throws SQLException {
         try (Connection c = getConnection();
              PreparedStatement ps = c.prepareStatement(
@@ -133,5 +135,18 @@ public class Database {
             }
         }
         return list;
+    }
+
+    private static String md5(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");   // algoritmo debole
+            byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
+            // converti in esadecimale
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
