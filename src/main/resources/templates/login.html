@@ -6,15 +6,20 @@
 </head>
 <body>
 <div class="login-container">
+    <!-- logo -->
+    <img src="/images/vulnapp-logo.png"
+         alt="VulnApp logo"
+         style="width:140px; display:block; margin:0 auto 1.2rem;">
+
 <h2>Login</h2>
 <form method="post" action="/login">
     <label>Username: <input type="text" name="username"/></label><br/>
     <label>Password: <input type="password" name="password"/></label><br/>
     <div class="button-group">
-        <button type="submit">Login</button>
-        <a href="/signup" class="signup-button">Signup</a>
+        <button class="btn-orange" type="submit">Login</button>
     </div>
 </form>
+<a href="/signup" class="signup-button">Sign up</a>
 <div th:if="${msg}" th:text="${msg}"></div>
 <div th:if="${error}" th:text="${error}"></div>
 </div>

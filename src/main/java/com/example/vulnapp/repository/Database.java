@@ -2,7 +2,9 @@ package com.example.vulnapp.repository;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.vulnapp.model.Upload;
 import com.example.vulnapp.model.User;
@@ -30,6 +32,14 @@ public class Database {
                         "content CLOB, " +
                         "user_id BIGINT, " +
                         "FOREIGN KEY (user_id) REFERENCES users(id))");
+
+                st.execute("CREATE TABLE IF NOT EXISTS messages (" +
+                                " id IDENTITY PRIMARY KEY, " +
+                                " content CLOB NOT NULL, " +
+                                " user_id BIGINT, " +
+                                " created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                                " FOREIGN KEY (user_id) REFERENCES users(id))");
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -91,6 +101,35 @@ public class Database {
                 up.setContent(rs.getString("content"));
                 up.setUserId(rs.getLong("user_id"));
                 list.add(up);
+            }
+        }
+        return list;
+    }
+
+    /* ========= quick-message helpers ========= */
+    public static void addMessage(String content, long userId) throws SQLException {
+        try (Connection c = getConnection();
+             PreparedStatement ps = c.prepareStatement(
+                     "INSERT INTO messages (content, user_id) VALUES (?, ?)")) {
+            ps.setString(1, content);
+            ps.setLong (2, userId);
+            ps.executeUpdate();
+        }
+    }
+
+    public static List<Map<String,String>> getAllMessages() throws SQLException {
+        List<Map<String,String>> list = new ArrayList<>();
+        String q = "SELECT m.id, m.content, u.username " +
+                "FROM messages m JOIN users u ON m.user_id=u.id " +
+                "ORDER BY m.created DESC";
+        try (Connection c = getConnection();
+             Statement st = c.createStatement();
+             ResultSet rs = st.executeQuery(q)) {
+            while (rs.next()) {
+                Map<String,String> row = new HashMap<>();
+                row.put("user", rs.getString("username"));
+                row.put("content", rs.getString("content"));
+                list.add(row);
             }
         }
         return list;

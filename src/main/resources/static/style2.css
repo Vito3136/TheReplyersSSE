@@ -1,3 +1,7 @@
 body { font-family: Arial, sans-serif; margin: 2em; }
 table { border-collapse: collapse; width: 100%; max-width: 800px; }
 th, td { padding: 0.5em; border: 1px solid #ccc; }
+
+.button-orange      { background:#ED690F; color:#fff; border:none;
+                      padding:.55rem 1.2rem; border-radius:6px; cursor:pointer; }
+.button-orange:hover{ background:#cf580d; }

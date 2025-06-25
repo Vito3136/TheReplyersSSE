@@ -47,22 +47,36 @@ form {
 table { border-collapse: collapse; width: 100%; max-width: 800px; }
 th, td { padding: 0.5em; border: 1px solid #ccc; }
 
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1em;
+/* pulsante arancione primario ---------------------------------------- */
+.btn-orange {
+  background:#ED690F;
+  color:#fff;
+  border:none;
+  padding:.55rem 1.4rem;
+  border-radius:6px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .15s;
+}
+.btn-orange:hover { background:#cf580d; }
+
+/* pulsante grigio (signup) ------------------------------------------ */
+.signup-button {
+  background:#d1d5db;
+  color:#111;
+  border:none;
+  padding:.55rem 1.4rem;
+  border-radius:6px;
+  font-weight:600;
+  text-decoration:none;
+  display:block;          /* per centrarlo */
+  width:max-content;      /* si adatta al testo */
+  margin:1rem auto 0;     /* centrato + spazio sopra */
 }
 
-.signup-button {
-    padding: 0.4em 1em;
-    background-color: #ddd;
-    border: 1px solid #999;
-    border-radius: 4px;
-    text-decoration: none;
-    color: black;
-    font-size: 1em;
-    display: inline-block;
-}
+/* gruppo per centrare il pulsante login ----------------------------- */
+.button-group { text-align:center; }
+
 
 .signup-button:hover {
     background-color: #ccc;

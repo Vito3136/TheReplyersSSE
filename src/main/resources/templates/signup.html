@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Signup</title>
+    <title>Sign up</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 <div class="login-container">
-<h2>Signup</h2>
+    <!-- logo -->
+    <img src="/images/vulnapp-logo.png"
+         alt="VulnApp logo"
+         style="width:140px; display:block; margin:0 auto 1.2rem;">
+
+<h2>Sign up</h2>
 <form method="post" action="/signup">
     <label>Username: <input type="text" name="username"/></label><br/>
     <label>Password: <input type="password" name="password"/></label><br/>
     <div class="button-group">
-        <button type="submit">Create Account</button>
-        <a href="/login" class="signup-button">Login</a>
+        <button class="btn-orange" type="submit">Create Account</button>
     </div>
 </form>
+<a href="/login" class="signup-button">Login</a>
 <div th:if="${error}" th:text="${error}"></div>
 </div>
 </body>

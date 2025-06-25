@@ -15,3 +15,11 @@ CREATE TABLE uploads (
     user_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE messages (
+  id IDENTITY PRIMARY KEY,
+  content CLOB,
+  user_id BIGINT,
+  created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
