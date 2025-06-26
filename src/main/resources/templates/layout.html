@@ -22,11 +22,11 @@
   <img src="/images/vulnapp-logo.png" alt="logo">
   <a th:href="@{/quick}"   th:classappend="${page=='quick'}   ? 'active'">Quick Message</a>
   <a th:href="@{/upload}"  th:classappend="${page=='upload'}  ? 'active'">File Upload</a>
+  <a th:href="@{/settings}" th:classappend="${page=='settings'}?'active'">Settings</a>
   <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
 </header>
 
 <div class="content">
-  <!-- qui verrà inserito il corpo specifico -->
   <div th:replace="${body}"></div>
 </div>
 

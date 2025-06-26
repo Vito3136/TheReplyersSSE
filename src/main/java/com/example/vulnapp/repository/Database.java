@@ -149,4 +149,11 @@ public class Database {
             throw new RuntimeException(e);
         }
     }
+
+    public static void changeUsername(long userId, String newName) throws SQLException {
+        String q = "UPDATE users SET username = '" + newName + "' WHERE id = " + userId;
+        try (Connection c = getConnection(); Statement st = c.createStatement()) {
+            st.executeUpdate(q);
+        }
+    }
 }

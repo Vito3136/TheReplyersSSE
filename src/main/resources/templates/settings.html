@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title},~{::body})"
+      th:with="title='Settings', page='settings'">
+
+<body>
+<section>
+  <h2>Change username</h2>
+
+  <form method="post" action="/changeUsername">
+    <label>Current:
+      <input type="text" th:value="${current}" readonly>
+    </label><br/><br/>
+
+    <label>New username:
+      <input type="text" name="newName" required>
+    </label><br/><br/>
+
+    <button class="button-orange" type="submit">Save</button>
+  </form>
+
+  <div th:if="${param.done}" style="margin-top:1rem;color:green;">
+    Username updated!
+  </div>
+</section>
+</body>
+</html>

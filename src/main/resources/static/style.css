@@ -47,7 +47,7 @@ form {
 table { border-collapse: collapse; width: 100%; max-width: 800px; }
 th, td { padding: 0.5em; border: 1px solid #ccc; }
 
-/* pulsante arancione primario ---------------------------------------- */
+/* pulsante arancione primario */
 .btn-orange {
   background:#ED690F;
   color:#fff;
@@ -60,7 +60,7 @@ th, td { padding: 0.5em; border: 1px solid #ccc; }
 }
 .btn-orange:hover { background:#cf580d; }
 
-/* pulsante grigio (signup) ------------------------------------------ */
+/* pulsante grigio */
 .signup-button {
   background:#d1d5db;
   color:#111;
@@ -74,9 +74,8 @@ th, td { padding: 0.5em; border: 1px solid #ccc; }
   margin:1rem auto 0;     /* centrato + spazio sopra */
 }
 
-/* gruppo per centrare il pulsante login ----------------------------- */
+/* gruppo per centrare il pulsante login */
 .button-group { text-align:center; }
-
 
 .signup-button:hover {
     background-color: #ccc;

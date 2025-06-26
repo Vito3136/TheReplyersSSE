@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Uploads</title>
-    <link rel="stylesheet" href="/style2.css">
+    <link rel="stylesheet" th:href="@{/style3.css}">
 </head>
 <body>
 <h2>All Uploads</h2>
@@ -14,11 +14,10 @@
     <tr th:each="u : ${uploads}">
         <td th:text="${u.id}"></td>
         <td th:text="${u.filename}">filename</td>
-        <!-- Using utext to avoid escaping: stored XSS vulnerability -->
         <td th:utext="${u.content}">content</td>
     </tr>
     </tbody>
 </table>
-<p><a href="/home">Home</a></p>
+<p><a href="/home" class="button-orange">Home</a></p>
 </body>
 </html>

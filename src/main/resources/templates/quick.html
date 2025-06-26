@@ -14,17 +14,16 @@
 
   <div th:if="${echo}" style="margin-top:1rem;">
     <strong>You said:</strong>
-    <span th:utext="${echo}">echo</span>   <!-- NO escaping -->
+    <span th:utext="${echo}">echo</span>
   </div>
 
-  <!-- ③ lista completa (stored XSS) -->
   <h3 style="margin-top:2rem;">All messages</h3>
   <table border="1" style="width:100%;border-collapse:collapse;">
     <thead><tr><th>User</th><th>Message</th></tr></thead>
     <tbody>
     <tr th:each="m : ${messages}">
       <td th:text="${m.user}">user</td>
-      <td th:utext="${m.content}">content</td> <!-- stored XSS -->
+      <td th:utext="${m.content}">content</td>
     </tr>
     </tbody>
   </table>

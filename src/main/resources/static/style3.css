@@ -1,0 +1,19 @@
+.button-orange      { background:#ED690F; color:#fff; border:none;
+                      padding:.55rem 1.2rem; border-radius:6px; cursor:pointer; }
+.button-orange:hover{ background:#cf580d; }
+
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: system-ui, Arial, sans-serif;
+}
+
+table { border-collapse: collapse; width: 100%; max-width: 800px; }
+th, td { padding: .6rem 1rem; border: 1px solid #ccc; }
+
+h2   { margin-top: 2rem; }
+p    { margin: 1.5rem 0 2rem; }
