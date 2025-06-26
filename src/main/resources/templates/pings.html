@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title},~{::body})"
+      th:with="title='Pings', page='pings'">
+
+<body>
+<section>
+    <h2>Pings received</h2>
+
+    <table>
+        <thead><tr><th>From</th><th>Date / Time</th></tr></thead>
+        <tbody>
+        <tr th:each="t : ${pings}">
+            <td th:utext="${t.user}">user</td>
+            <td th:text="${#dates.format(t.ts, 'yyyy-MM-dd HH:mm:ss')}">2025-06-26</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>
+

@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title th:text="${title}">VulnApp</title>
-  <link rel="stylesheet" th:href="@{/style2.css}">
+  <link th:href="@{/style2.css}" rel="stylesheet">
+  <link th:if="${page == 'users'}"
+        th:href="@{/style4.css}"
+        rel="stylesheet">
   <style>
     /* navbar minimale */
     .navbar   { background:#D6E0FF; color:#fff; display:flex; align-items:center;
@@ -22,6 +25,8 @@
   <img src="/images/vulnapp-logo.png" alt="logo">
   <a th:href="@{/quick}"   th:classappend="${page=='quick'}   ? 'active'">Quick Message</a>
   <a th:href="@{/upload}"  th:classappend="${page=='upload'}  ? 'active'">File Upload</a>
+  <a th:href="@{/users}"  th:classappend="${page=='users'} ? 'active'">Send Ping</a>
+  <a th:href="@{/pings}" th:classappend="${page=='pings'}? 'active'">Pings received</a>
   <a th:href="@{/settings}" th:classappend="${page=='settings'}?'active'">Settings</a>
   <a th:href="@{/logout}" style="margin-left:auto;">Logout</a>
 </header>

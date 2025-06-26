@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="layout :: layout(~{::title},~{::body})"
+      th:with="title='Users', page='users'">
+
+<body>
+<section>
+  <h2>All users</h2>
+
+  <table>
+    <thead><tr><th>Username</th><th>Action</th></tr></thead>
+    <tbody>
+    <tr th:each="u : ${users}">
+      <td th:utext="${u.username}">user</td>
+
+      <td class="action-cell">
+        <form method="post" th:action="@{/ping}">
+          <input type="hidden" name="toId" th:value="${u.id}">
+
+          <button class="ping-btn" type="submit">Ping</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</section>
+</body>
+</html>

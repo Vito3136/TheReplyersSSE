@@ -23,3 +23,12 @@ CREATE TABLE messages (
   created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS pings (
+  id        IDENTITY PRIMARY KEY,
+  from_id   BIGINT,
+  to_id     BIGINT,
+  sent_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (from_id) REFERENCES users(id),
+  FOREIGN KEY (to_id)   REFERENCES users(id)
+);

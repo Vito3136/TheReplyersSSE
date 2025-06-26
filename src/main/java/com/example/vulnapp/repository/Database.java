@@ -43,6 +43,15 @@ public class Database {
                                 " created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                                 " FOREIGN KEY (user_id) REFERENCES users(id))");
 
+                st.execute(
+                        "CREATE TABLE IF NOT EXISTS pings (" +
+                                " id IDENTITY PRIMARY KEY, " +
+                                " from_id BIGINT, " +
+                                " to_id   BIGINT, " +
+                                " sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                                " FOREIGN KEY (from_id) REFERENCES users(id), " +
+                                " FOREIGN KEY (to_id)   REFERENCES users(id))");
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -139,7 +148,7 @@ public class Database {
 
     private static String md5(String input) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");   // algoritmo debole
+            MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
             // converti in esadecimale
             StringBuilder sb = new StringBuilder();
@@ -156,4 +165,59 @@ public class Database {
             st.executeUpdate(q);
         }
     }
+
+    public static void addPing(long fromId, long toId) throws SQLException {
+        String q = "INSERT INTO pings (from_id, to_id) VALUES ("+fromId+","+toId+")";
+        try (Statement st = getConnection().createStatement()) { st.executeUpdate(q); }
+    }
+
+    public static List<User> getAllUsers() throws SQLException {
+        List<User> list = new ArrayList<>();
+        try (Statement st = getConnection().createStatement();
+             ResultSet rs = st.executeQuery("SELECT * FROM users")) {
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getLong("id"));
+                u.setUsername(rs.getString("username"));
+                list.add(u);
+            }
+        }
+        return list;
+    }
+
+    public static List<User> getOtherUsers(long myId) throws SQLException {
+        List<User> list = new ArrayList<>();
+        String q = "SELECT * FROM users WHERE id <> " + myId;
+        try (Statement st = getConnection().createStatement();
+             ResultSet rs = st.executeQuery(q)) {
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getLong("id"));
+                u.setUsername(rs.getString("username"));
+                list.add(u);
+            }
+        }
+        return list;
+    }
+
+    public static List<Map<String,Object>> getSenders(long myId) throws SQLException {
+        List<Map<String,Object>> list = new ArrayList<>();
+
+        String q = "SELECT u.username, t.sent_at " +
+                "FROM pings t JOIN users u ON t.from_id = u.id " +
+                "WHERE t.to_id = " + myId +
+                " ORDER BY t.sent_at DESC";
+
+        try (Statement st = getConnection().createStatement();
+             ResultSet rs = st.executeQuery(q)) {
+            while (rs.next()) {
+                Map<String,Object> row = new HashMap<>();
+                row.put("user", rs.getString(1));
+                row.put("ts",   rs.getTimestamp(2));
+                list.add(row);
+            }
+        }
+        return list;
+    }
+
 }

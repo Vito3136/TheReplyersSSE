@@ -1,0 +1,12 @@
+td.action-cell { text-align:center; }
+
+.ping-btn {
+    background:#ED690F;
+    color:#fff;
+    border:none;
+    padding:.45rem 1.2rem;
+    border-radius:6px;
+    font-weight:600;
+    cursor:pointer;
+}
+.ping-btn:hover { background:#cf580d; }
