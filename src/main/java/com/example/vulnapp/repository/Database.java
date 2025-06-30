@@ -171,20 +171,6 @@ public class Database {
         try (Statement st = getConnection().createStatement()) { st.executeUpdate(q); }
     }
 
-    public static List<User> getAllUsers() throws SQLException {
-        List<User> list = new ArrayList<>();
-        try (Statement st = getConnection().createStatement();
-             ResultSet rs = st.executeQuery("SELECT * FROM users")) {
-            while (rs.next()) {
-                User u = new User();
-                u.setId(rs.getLong("id"));
-                u.setUsername(rs.getString("username"));
-                list.add(u);
-            }
-        }
-        return list;
-    }
-
     public static List<User> getOtherUsers(long myId) throws SQLException {
         List<User> list = new ArrayList<>();
         String q = "SELECT * FROM users WHERE id <> " + myId;
