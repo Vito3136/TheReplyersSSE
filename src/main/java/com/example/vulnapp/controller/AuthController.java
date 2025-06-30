@@ -41,7 +41,7 @@ public class AuthController {
                           Model model,
                           HttpSession session) {
         try {
-            User user = Database.validateUser(username, password); // vulnerable
+            User user = Database.validateUser(username, password);
             if (user != null) {
                 session.setAttribute("user", user);
                 return "redirect:/home";
