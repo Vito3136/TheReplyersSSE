@@ -11,11 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class MainController {
@@ -24,11 +29,19 @@ public class MainController {
     public String handleFileUpload(@RequestParam("file") MultipartFile file, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
+
+        List<String> allowedTypes = Arrays.asList("text/plain", "text/csv", "application/pdf");
+        if (!allowedTypes.contains(file.getContentType())) {
+            return "redirect:/upload";
+        }
+
         try {
+            String randomFileName = UUID.randomUUID() + ".txt";
             String content = new String(file.getBytes(), StandardCharsets.UTF_8);
-            Database.addUpload(file.getOriginalFilename(), content, user.getId());
+            Database.addUpload(randomFileName, content, user.getId());
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "File upload error", e);
+            return "redirect:/upload";
         }
         return "redirect:/uploads";
     }
@@ -47,7 +60,7 @@ public class MainController {
     }
 
     @GetMapping({"/home", "/quick"})
-    public String quick(@RequestParam(required = false) String echo, HttpSession session, Model model) {
+    public String quick(@ModelAttribute("echo") String echo, HttpSession session, Model model) {
 
         User u = requireLogin(session);
         model.addAttribute("page", "quick");
@@ -61,14 +74,15 @@ public class MainController {
 
     @PostMapping("/message")
     public String saveMessage(@RequestParam String message,
-                              HttpSession session) {
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
 
         User u = requireLogin(session);
 
         try { Database.addMessage(message, u.getId()); } catch (SQLException ignored) {}
 
-        return "redirect:/quick?echo=" +
-                UriUtils.encode(message, StandardCharsets.UTF_8);
+        redirectAttributes.addFlashAttribute("echo", message);
+        return "redirect:/quick";
     }
 
     private User requireLogin(HttpSession s) {
