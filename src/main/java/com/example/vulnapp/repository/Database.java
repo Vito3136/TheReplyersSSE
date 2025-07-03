@@ -1,5 +1,13 @@
 package com.example.vulnapp.repository;
 
+import com.example.vulnapp.config.DBConfig;
+import com.example.vulnapp.model.Upload;
+import com.example.vulnapp.model.User;
+import jakarta.annotation.PostConstruct;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -9,20 +17,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.vulnapp.model.Upload;
-import com.example.vulnapp.model.User;
-
+@Component
 public class Database {
 
     private static final String JDBC_URL = "jdbc:h2:./vulnappdb";
-    private static final String JDBC_USER = "sa";
-    private static final String JDBC_PASS = "";
+    private static String JDBC_USER;
+    private static String JDBC_PASS;
 
-    static {
+    @Autowired
+    private DBConfig dbConfig;
+
+    @PostConstruct
+    public void init() {
+        JDBC_USER = dbConfig.getUsername();
+        JDBC_PASS = dbConfig.getPassword();
+
         try {
             Class.forName("org.h2.Driver");
-            try (Connection conn = getConnection();
-                 Statement st = conn.createStatement()) {
+            try (Connection conn = getConnection(); Statement st = conn.createStatement()) {
 
                 st.execute("CREATE TABLE IF NOT EXISTS users (" +
                         "id IDENTITY PRIMARY KEY, " +
@@ -37,11 +49,11 @@ public class Database {
                         "FOREIGN KEY (user_id) REFERENCES users(id))");
 
                 st.execute("CREATE TABLE IF NOT EXISTS messages (" +
-                                " id IDENTITY PRIMARY KEY, " +
-                                " content CLOB NOT NULL, " +
-                                " user_id BIGINT, " +
-                                " created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                                " FOREIGN KEY (user_id) REFERENCES users(id))");
+                        " id IDENTITY PRIMARY KEY, " +
+                        " content CLOB NOT NULL, " +
+                        " user_id BIGINT, " +
+                        " created TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                        " FOREIGN KEY (user_id) REFERENCES users(id))");
 
                 st.execute(
                         "CREATE TABLE IF NOT EXISTS pings (" +
@@ -51,10 +63,9 @@ public class Database {
                                 " sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                                 " FOREIGN KEY (from_id) REFERENCES users(id), " +
                                 " FOREIGN KEY (to_id)   REFERENCES users(id))");
-
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LoggerFactory.getLogger(Database.class).error("Database failure", ex);
         }
     }
 
