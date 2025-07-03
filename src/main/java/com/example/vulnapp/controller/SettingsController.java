@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class SettingsController {
@@ -27,8 +29,9 @@ public class SettingsController {
     public String change(@RequestParam String newName, HttpSession s) {
         User u = requireLogin(s);
         try { Database.changeUsername(u.getId(), newName); }
-        catch (SQLException ignored) {}
-        /* Aggiorna oggetto in sessione */
+        catch (SQLException e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Change username error", e);
+        }
         u.setUsername(newName);
         return "redirect:/settings?done";
     }

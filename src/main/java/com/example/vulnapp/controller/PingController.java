@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class PingController {
@@ -28,7 +30,11 @@ public class PingController {
     @PostMapping("/ping")
     public String send(@RequestParam long toId, HttpSession s) {
         User me = requireLogin(s);
-        try { Database.addPing(me.getId(), toId); } catch (SQLException ignored) {}
+        try {
+            Database.addPing(me.getId(), toId);
+        } catch (SQLException e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Send ping error", e);
+        }
         return "redirect:/users";
     }
 
@@ -39,7 +45,6 @@ public class PingController {
         m.addAttribute("pings", Database.getSenders(me.getId()));
         return "pings";
     }
-
 
     private User requireLogin(HttpSession s) {
         User u = (User) s.getAttribute("user");

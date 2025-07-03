@@ -16,6 +16,8 @@ import org.springframework.web.util.UriUtils;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class MainController {
@@ -65,7 +67,11 @@ public class MainController {
 
         User u = requireLogin(session);
 
-        try { Database.addMessage(message, u.getId()); } catch (SQLException ignored) {}
+        try {
+            Database.addMessage(message, u.getId());
+        } catch (SQLException e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Send message error", e);
+        }
 
         return "redirect:/quick?echo=" +
                 UriUtils.encode(message, StandardCharsets.UTF_8);
