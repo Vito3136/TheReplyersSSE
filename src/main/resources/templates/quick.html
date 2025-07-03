@@ -12,7 +12,7 @@
     <button class="button-orange" type="submit" style="margin-top:.8rem;">Send</button>
   </form>
 
-  <div th:if="${echo}" style="margin-top:1rem;">
+  <div th:if="${echo != null} and ${!#strings.isEmpty(echo)}" style="margin-top:1rem;">
     <strong>You said:</strong>
     <span th:utext="${echo}">echo</span>
   </div>
