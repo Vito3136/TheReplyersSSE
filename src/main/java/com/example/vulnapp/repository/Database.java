@@ -8,14 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class Database {
@@ -39,7 +33,8 @@ public class Database {
                 st.execute("CREATE TABLE IF NOT EXISTS users (" +
                         "id IDENTITY PRIMARY KEY, " +
                         "username VARCHAR(100) UNIQUE NOT NULL, " +
-                        "password VARCHAR(100) NOT NULL)");
+                        "password_hash VARCHAR(128) NOT NULL, " +
+                        "password_salt VARCHAR(64) NOT NULL)");
 
                 st.execute("CREATE TABLE IF NOT EXISTS uploads (" +
                         "id IDENTITY PRIMARY KEY, " +
@@ -81,12 +76,21 @@ public class Database {
             throw new IllegalArgumentException("Invalid password format");
         }
 
+        String sql = "INSERT INTO users (username, password_hash, password_salt) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                     "INSERT INTO users (username, password) VALUES (?, ?)")) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            byte[] salt = PswdHash.generateSalt();
+            String saltBase64 = PswdHash.encodeSalt(salt);
+            String hashBase64 = PswdHash.hashPassword(password.toCharArray(), salt);
+
             ps.setString(1, username);
-            ps.setString(2, md5(password));
+            ps.setString(2, hashBase64);
+            ps.setString(3, saltBase64);
+
             ps.executeUpdate();
+        } catch (Exception e) {
+            throw new RuntimeException("User creation error", e);
         }
     }
 
@@ -98,26 +102,34 @@ public class Database {
             throw new IllegalArgumentException("Invalid password format");
         }
 
-        String hash = md5(password);
-        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(query)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, username);
-            ps.setString(2, hash);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    User u = new User();
-                    u.setId(rs.getLong("id"));
-                    u.setUsername(rs.getString("username"));
-                    u.setPassword(rs.getString("password"));
-                    return u;
+                    String storedHash = rs.getString("password_hash");
+                    String storedSalt = rs.getString("password_salt");
+
+                    byte[] saltBytes = PswdHash.decodeSalt(storedSalt);
+                    String attemptedHash = PswdHash.hashPassword(password.toCharArray(), saltBytes);
+
+                    if (storedHash.equals(attemptedHash)) {
+                        User u = new User();
+                        u.setId(rs.getLong("id"));
+                        u.setUsername(rs.getString("username"));
+                        u.setPassword(null);
+                        return u;
+                    }
                 }
-                return null;
+            } catch (Exception e) {
+                throw new RuntimeException("User validation error", e);
             }
         }
+        return null;
     }
-
 
     public static void addUpload(String filename, String content, long userId) throws SQLException {
         try (Connection conn = getConnection();
@@ -173,19 +185,6 @@ public class Database {
             }
         }
         return list;
-    }
-
-    private static String md5(String input) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(input.getBytes(StandardCharsets.UTF_8));
-            // converti in esadecimale
-            StringBuilder sb = new StringBuilder();
-            for (byte b : hash) sb.append(String.format("%02x", b));
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static void changeUsername(long userId, String newName) throws SQLException {
