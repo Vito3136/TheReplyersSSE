@@ -26,7 +26,6 @@ public class PingController {
         return "users";
     }
 
-
     @PostMapping("/ping")
     public String send(@RequestParam long toId, HttpSession s) {
         User me = requireLogin(s);

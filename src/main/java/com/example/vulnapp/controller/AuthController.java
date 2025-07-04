@@ -2,6 +2,7 @@ package com.example.vulnapp.controller;
 
 import com.example.vulnapp.model.User;
 import com.example.vulnapp.repository.Database;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,11 +40,17 @@ public class AuthController {
     public String doLogin(@RequestParam("username") String username,
                           @RequestParam("password") String password,
                           Model model,
-                          HttpSession session) {
+                          HttpServletRequest request) {
         try {
             User user = Database.validateUser(username, password);
             if (user != null) {
-                session.setAttribute("user", user);
+                HttpSession oldSession = request.getSession(false);
+                if (oldSession != null) {
+                    oldSession.invalidate();
+                }
+
+                HttpSession newSession = request.getSession(true);
+                newSession.setAttribute("user", user);
                 return "redirect:/home";
             } else {
                 model.addAttribute("error", "Invalid credentials");
