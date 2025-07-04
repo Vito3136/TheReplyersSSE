@@ -202,14 +202,20 @@ public class Database {
     }
 
     public static void addPing(long fromId, long toId) throws SQLException {
-        String q = "INSERT INTO pings (from_id, to_id) VALUES ("+fromId+","+toId+")";
-        try (Statement st = getConnection().createStatement()) { st.executeUpdate(q); }
+        String q = "INSERT INTO pings (from_id, to_id) VALUES (?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(q)) {
+            ps.setLong(1, fromId);
+            ps.setLong(2, toId);
+            ps.executeUpdate();
+        }
     }
 
     public static List<User> getOtherUsers(long myId) throws SQLException {
         List<User> list = new ArrayList<>();
         String q = "SELECT * FROM users WHERE id <> " + myId;
-        try (Statement st = getConnection().createStatement();
+        try (Connection conn = getConnection();
+             Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(q)) {
             while (rs.next()) {
                 User u = new User();
@@ -229,7 +235,8 @@ public class Database {
                 "WHERE t.to_id = " + myId +
                 " ORDER BY t.sent_at DESC";
 
-        try (Statement st = getConnection().createStatement();
+        try (Connection conn = getConnection();
+             Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(q)) {
             while (rs.next()) {
                 Map<String,Object> row = new HashMap<>();
