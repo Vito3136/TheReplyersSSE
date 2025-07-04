@@ -5,8 +5,9 @@ import com.example.vulnapp.repository.Database;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.servlet.http.HttpSession;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 public class AuthController {
@@ -50,7 +51,9 @@ public class AuthController {
                 return "login";
             }
         } catch (Exception ex) {
-            model.addAttribute("error", "Error: " + ex.getMessage());
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error during login for user "
+                    + username + ": " + ex.getMessage() + ex);
+            model.addAttribute("error", "An unexpected error occurred. Please try again later.");
             return "login";
         }
     }
