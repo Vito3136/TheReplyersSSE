@@ -69,6 +69,13 @@ public class Database {
     }
 
     public static void createUser(String username, String password) throws SQLException {
+        if (username == null || !username.matches("^[a-zA-Z0-9_.-]{3,30}$")) {
+            throw new IllegalArgumentException("Invalid username format");
+        }
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Invalid password format");
+        }
+
         String sql = "INSERT INTO users (username, password_hash, password_salt) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -88,6 +95,13 @@ public class Database {
     }
 
     public static User validateUser(String username, String password) throws SQLException {
+        if (username == null || !username.matches("^[a-zA-Z0-9_.-]{3,30}$")) {
+            throw new IllegalArgumentException("Invalid username format");
+        }
+        if (password == null || password.isEmpty()) {
+            throw new IllegalArgumentException("Invalid password format");
+        }
+
         String sql = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -174,9 +188,15 @@ public class Database {
     }
 
     public static void changeUsername(long userId, String newName) throws SQLException {
-        String q = "UPDATE users SET username = '" + newName + "' WHERE id = " + userId;
-        try (Connection c = getConnection(); Statement st = c.createStatement()) {
-            st.executeUpdate(q);
+        if (newName == null || !newName.matches("^[a-zA-Z0-9_.-]{3,30}$")) {
+            throw new IllegalArgumentException("Invalid username format");
+        }
+
+        String q = "UPDATE users SET username = ? WHERE id = ?";
+        try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(q)) {
+            ps.setString(1, newName);
+            ps.setLong(2, userId);
+            ps.executeUpdate();
         }
     }
 

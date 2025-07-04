@@ -54,7 +54,8 @@ public class MainController {
             List<Upload> uploads = Database.getAllUploads();
             model.addAttribute("uploads", uploads);
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error during upload: " + e.getMessage() + e);
+            model.addAttribute("error", "An unexpected error occurred. Please try again later.");
         }
         return "uploads";
     }
