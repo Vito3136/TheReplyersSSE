@@ -6,13 +6,13 @@
 </head>
 <body>
 <div class="login-container">
-    <!-- logo -->
     <img src="/images/vulnapp-logo.png"
          alt="VulnApp logo"
          style="width:140px; display:block; margin:0 auto 1.2rem;">
 
 <h2>Login</h2>
 <form method="post" action="/login">
+    <input type="hidden" name="csrfToken" th:value="${csrfToken}"/>
     <label>Username: <input type="text" name="username"/></label><br/>
     <label>Password: <input type="password" name="password"/></label><br/>
     <div class="button-group">

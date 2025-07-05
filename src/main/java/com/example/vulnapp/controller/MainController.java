@@ -26,7 +26,15 @@ import java.util.UUID;
 public class MainController {
 
     @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file, HttpSession session) {
+    public String handleFileUpload(@RequestParam("file") MultipartFile file,
+                                   @RequestParam("csrfToken") String csrfToken,
+                                   HttpSession session) {
+
+        String sessionToken = (String) session.getAttribute("csrfToken");
+        if (sessionToken == null || !sessionToken.equals(csrfToken)) {
+            throw new SecurityException("Invalid CSRF token");
+        }
+
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
@@ -63,6 +71,10 @@ public class MainController {
     @GetMapping({"/home", "/quick"})
     public String quick(@ModelAttribute("echo") String echo, HttpSession session, Model model) {
 
+        String csrfToken = UUID.randomUUID().toString();
+        session.setAttribute("csrfToken", csrfToken);
+        model.addAttribute("csrfToken", csrfToken);
+
         User u = requireLogin(session);
         model.addAttribute("page", "quick");
 
@@ -75,12 +87,18 @@ public class MainController {
 
     @PostMapping("/message")
     public String saveMessage(@RequestParam String message,
+                              @RequestParam("csrfToken") String csrfToken,
                               HttpSession session,
                               RedirectAttributes redirectAttributes) {
 
         User u = requireLogin(session);
 
         try {
+            String sessionToken = (String) session.getAttribute("csrfToken");
+            if (sessionToken == null || !sessionToken.equals(csrfToken)) {
+                throw new SecurityException("Invalid CSRF token");
+            }
+
             Database.addMessage(message, u.getId());
         } catch (SQLException e) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Send message error", e);
@@ -98,6 +116,10 @@ public class MainController {
 
     @GetMapping("/upload")
     public String uploadPage(HttpSession session, Model m) {
+        String csrfToken = UUID.randomUUID().toString();
+        session.setAttribute("csrfToken", csrfToken);
+        m.addAttribute("csrfToken", csrfToken);
+
         checkLogin(session);
         m.addAttribute("page", "upload");
         return "upload";

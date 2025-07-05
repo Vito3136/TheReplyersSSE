@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
+
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,18 +16,28 @@ import java.util.logging.Logger;
 public class AuthController {
 
     @GetMapping("/signup")
-    public String signupForm() {
+    public String signupForm(HttpSession session, Model model) {
+        String csrfToken = UUID.randomUUID().toString();
+        session.setAttribute("csrfToken", csrfToken);
+        model.addAttribute("csrfToken", csrfToken);
         return "signup";
     }
 
     @PostMapping("/signup")
     public String doSignup(@RequestParam("username") String username,
                            @RequestParam("password") String password,
+                           @RequestParam("csrfToken") String csrfToken,
+                           HttpSession session,
                            Model model) {
         try {
+            String sessionToken = (String) session.getAttribute("csrfToken");
+            if (sessionToken == null || !sessionToken.equals(csrfToken)) {
+                throw new SecurityException("Invalid CSRF token");
+            }
+
             Database.createUser(username, password);
             model.addAttribute("msg", "User created! You can now login.");
-            return "login";
+            return "redirect:/login";
         } catch (Exception ex) {
             model.addAttribute("error", "Error: " + ex.getMessage());
             return "signup";
@@ -33,16 +45,25 @@ public class AuthController {
     }
 
     @GetMapping({"/login", "/"})
-    public String loginForm() {
+    public String loginForm(HttpSession session, Model model) {
+        String csrfToken = UUID.randomUUID().toString();
+        session.setAttribute("csrfToken", csrfToken);
+        model.addAttribute("csrfToken", csrfToken);
         return "login";
     }
 
     @PostMapping("/login")
     public String doLogin(@RequestParam("username") String username,
                           @RequestParam("password") String password,
+                          @RequestParam("csrfToken") String csrfToken,
                           Model model,
                           HttpServletRequest request) {
         try {
+            String sessionToken = (String) request.getSession().getAttribute("csrfToken");
+            if (sessionToken == null || !sessionToken.equals(csrfToken)) {
+                throw new SecurityException("Invalid CSRF token");
+            }
+
             User user = Database.validateUser(username, password);
             if (user != null) {
                 HttpSession oldSession = request.getSession(false);

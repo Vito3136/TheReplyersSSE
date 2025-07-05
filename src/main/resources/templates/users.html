@@ -15,6 +15,7 @@
 
       <td class="action-cell">
         <form method="post" th:action="@{/ping}">
+          <input type="hidden" name="csrfToken" th:value="${csrfToken}"/>
           <input type="hidden" name="toId" th:value="${u.id}">
 
           <button class="ping-btn" type="submit">Ping</button>

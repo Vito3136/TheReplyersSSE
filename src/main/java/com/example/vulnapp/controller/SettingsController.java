@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.SQLException;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,13 +21,22 @@ public class SettingsController {
 
     @GetMapping("/settings")
     public String settings(HttpSession s, Model m) {
+        String csrfToken = UUID.randomUUID().toString();
+        s.setAttribute("csrfToken", csrfToken);
+        m.addAttribute("csrfToken", csrfToken);
         User u = requireLogin(s);
         m.addAttribute("current", u.getUsername());
         return "settings";
     }
 
     @PostMapping("/changeUsername")
-    public String change(@RequestParam String newName, HttpSession s) {
+    public String change(@RequestParam String newName,
+                         @RequestParam("csrfToken") String csrfToken,
+                         HttpSession s) {
+        String sessionToken = (String) s.getAttribute("csrfToken");
+        if (sessionToken == null || !sessionToken.equals(csrfToken)) {
+            throw new SecurityException("Invalid CSRF token");
+        }
         User u = requireLogin(s);
         try { Database.changeUsername(u.getId(), newName); }
         catch (SQLException e) {

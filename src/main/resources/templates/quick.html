@@ -8,6 +8,7 @@
   <h2>Quick Message</h2>
 
   <form method="post" action="/message">
+    <input type="hidden" name="csrfToken" th:value="${csrfToken}"/>
     <input type="text" name="message" placeholder="Say something…" required style="width:100%;padding:.55rem;">
     <button class="button-orange" type="submit" style="margin-top:.8rem;">Send</button>
   </form>

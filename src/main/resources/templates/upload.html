@@ -8,6 +8,7 @@
   <h2>Upload a File</h2>
 
   <form method="post" action="/upload" enctype="multipart/form-data">
+    <input type="hidden" name="csrfToken" th:value="${csrfToken}"/>
     <input type="file" name="file" required>
     <button class="button-orange" type="submit">Upload</button>
   </form>

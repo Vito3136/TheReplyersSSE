@@ -8,6 +8,7 @@
   <h2>Change username</h2>
 
   <form method="post" action="/changeUsername">
+    <input type="hidden" name="csrfToken" th:value="${csrfToken}"/>
     <label>Current:
       <input type="text" th:value="${current}" readonly>
     </label><br/><br/>
