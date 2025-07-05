@@ -28,6 +28,11 @@
             <artifactId>h2</artifactId>
             <version>2.2.224</version> <!-- ultima stabile -->
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.11.0</version>
+        </dependency>
     </dependencies>
 
     <build>

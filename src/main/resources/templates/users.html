@@ -11,7 +11,7 @@
     <thead><tr><th>Username</th><th>Action</th></tr></thead>
     <tbody>
     <tr th:each="u : ${users}">
-      <td th:utext="${u.username}">user</td>
+      <td th:text="${u.username}">user</td>
 
       <td class="action-cell">
         <form method="post" th:action="@{/ping}">

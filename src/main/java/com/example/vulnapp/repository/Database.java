@@ -4,6 +4,7 @@ import com.example.vulnapp.config.DBConfig;
 import com.example.vulnapp.model.Upload;
 import com.example.vulnapp.model.User;
 import jakarta.annotation.PostConstruct;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -180,7 +181,7 @@ public class Database {
             while (rs.next()) {
                 Map<String,String> row = new HashMap<>();
                 row.put("user", rs.getString("username"));
-                row.put("content", rs.getString("content"));
+                row.put("content", StringEscapeUtils.escapeHtml4(rs.getString("content")));
                 list.add(row);
             }
         }

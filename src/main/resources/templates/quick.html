@@ -14,7 +14,7 @@
 
   <div th:if="${echo != null} and ${!#strings.isEmpty(echo)}" style="margin-top:1rem;">
     <strong>You said:</strong>
-    <span th:utext="${echo}">echo</span>
+    <span th:text="${echo}">echo</span>
   </div>
 
   <h3 style="margin-top:2rem;">All messages</h3>
@@ -23,7 +23,7 @@
     <tbody>
     <tr th:each="m : ${messages}">
       <td th:text="${m.user}">user</td>
-      <td th:utext="${m.content}">content</td>
+      <td th:text="${m.content}">content</td>
     </tr>
     </tbody>
   </table>

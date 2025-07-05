@@ -14,7 +14,7 @@
     <tr th:each="u : ${uploads}">
         <td th:text="${u.id}"></td>
         <td th:text="${u.filename}">filename</td>
-        <td th:utext="${u.content}">content</td>
+        <td th:text="${u.content}">content</td>
     </tr>
     </tbody>
 </table>
