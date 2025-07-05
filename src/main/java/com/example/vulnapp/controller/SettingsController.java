@@ -28,7 +28,6 @@ public class SettingsController {
         User u = requireLogin(s);
         try { Database.changeUsername(u.getId(), newName); }
         catch (SQLException ignored) {}
-        /* Aggiorna oggetto in sessione */
         u.setUsername(newName);
         return "redirect:/settings?done";
     }
