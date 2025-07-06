@@ -69,9 +69,9 @@ th, td { padding: 0.5em; border: 1px solid #ccc; }
   border-radius:6px;
   font-weight:600;
   text-decoration:none;
-  display:block;          /* per centrarlo */
-  width:max-content;      /* si adatta al testo */
-  margin:1rem auto 0;     /* centrato + spazio sopra */
+  display:block;
+  width:max-content;
+  margin:1rem auto 0;
 }
 
 /* gruppo per centrare il pulsante login */
