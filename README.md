@@ -9,7 +9,11 @@ project root on first launch.
 
 ## Web application features
 
+- Login / Sign up functionality
 - Quick Message functionality
-- File upload functionality
-- Change username functionality
+- File Upload functionality
+- Send Ping / Ping received functionality
+- Settings functionality
 - Logout functionality
+
+The repository is composed by 2 branches, the MASTER branch which contains the original Web Application and the FIXES branch wich contains the fixed Web Application.
